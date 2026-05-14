@@ -1,16 +1,11 @@
-/**
- * ORQUESTRADOR PRINCIPAL - src/app.js
- * Configurado para mostrar a engrenagem APENAS para o administrador.
- */
-
 import { buscarNoticias } from './api/news-service.js';
 import { criarCardNoticia } from './components/card-noticia.js';
 
 async function inicializarSite() {
     const feed = document.getElementById('news-feed');
     
-    // VERIFICAÇÃO DE SEGURANÇA:
-    // O ícone só é criado se a URL contiver '?admin=true'
+    // VERIFICAÇÃO PARA APARECER A ENGRENAGEM:
+    // Digite ?admin=true no final da URL do seu site para ela aparecer
     const urlParams = new URLSearchParams(window.location.search);
     const isAdmin = urlParams.get('admin') === 'true';
 
@@ -34,17 +29,18 @@ async function inicializarSite() {
     } else {
         feed.innerHTML = `
             <div class="glass-panel" style="margin:20px; padding:30px; text-align:center; border-radius:20px;">
-                <p>OIO News Vision</p>
-                <p style="font-size:0.8rem; color:#666;">Aguardando conexão com a fonte de notícias.</p>
+                <p style="font-weight: bold;">Vision-News-Portal</p>
+                <p style="font-size:0.8rem; color:#666;">Aguardando ativação da fonte de dados.</p>
+                <p style="font-size:0.7rem; color:#999; margin-top:10px;">(Acesse via link admin para configurar)</p>
             </div>`;
     }
 }
 
 function abrirConfiguracao() {
-    const chave = prompt("Acesso Restrito: Insira sua API Key do GNews:");
+    const chave = prompt("Configuração Privada: Insira sua API Key do GNews:");
     if (chave) {
         localStorage.setItem('GNEWS_API_KEY', chave);
-        alert("Chave configurada com sucesso!");
+        alert("Chave salva! O site será atualizado.");
         location.reload();
     }
 }
@@ -52,5 +48,5 @@ function abrirConfiguracao() {
 document.addEventListener('DOMContentLoaded', inicializarSite);
 
 window.filterNews = (categoria) => {
-    console.log("Filtro:", categoria);
+    console.log("Categoria:", categoria);
 };
