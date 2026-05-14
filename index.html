@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Not-cias-News-canal</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="light-theme">
+
+    <div id="app-container">
+        <header id="marketing-top" class="glass-panel">
+            <p>Espaço Publicitário</p>
+        </header>
+
+        <main id="news-feed">
+            </main>
+
+        <nav id="main-nav-right" class="glass-panel">
+            <button onclick="filterNews('ultimas')">Últimas</button>
+            <button onclick="filterNews('videos')">Vídeos</button>
+            <button onclick="filterNews('audios')">Áudios</button>
+            <button onclick="filterNews('marketing')">Destaques</button>
+        </nav>
+    </div>
+
+    <script src="src/app.js" type="module"></script>
+</body>
+</html>
