@@ -1,39 +1,44 @@
 /**
- * SERVIÇO DE NOTÍCIAS SEGURO - src/api/news-service.js
- * Este arquivo busca a chave do localStorage para garantir que nada seja exposto no GitHub.
+ * SERVIÇO DE NOTÍCIAS - src/api/news-service.js
  */
 
 export async function buscarNoticias() {
-    // Recupera a chave salva localmente no seu navegador via ícone de engrenagem
     const apiKey = localStorage.getItem('GNEWS_API_KEY');
 
     if (!apiKey) {
-        console.warn("Chave da API não encontrada. Clique na engrenagem para configurar.");
+        console.warn("Chave não encontrada.");
         return [];
     }
 
-    // Proxy para evitar erro de CORS no GitHub Pages
-    const proxy = "https://cors-anywhere.herokuapp.com/";
-    const urlBase = `https://gnews.io/api/v4/top-headlines?category=general&lang=pt&country=br&max=10&apikey=${apiKey}`;
+    // Tentaremos a conexão direta. 
+    // Se o navegador bloquear por CORS, usaremos o plano B.
+    const url = `https://gnews.io/api/v4/top-headlines?category=general&lang=pt&country=br&max=10&apikey=${apiKey}`;
 
     try {
-        // Tentativa de busca segura
-        const response = await fetch(proxy + urlBase);
+        const response = await fetch(url);
         
         if (!response.ok) {
-            throw new Error(`Erro na requisição: ${response.status}`);
+            const erro = await response.json();
+            console.error("Erro detalhado da API:", erro);
+            return [];
         }
 
         const data = await response.json();
+        return data.articles || [];
         
-        if (data.articles) {
-            return data.articles;
-        } else {
-            console.error("A API retornou um erro:", data.errors);
+    } catch (error) {
+        console.error("Erro de rede:", error);
+        
+        // Plano B: Se a conexão direta falhar, tentamos via proxy alternativo
+        try {
+            const proxySecundario = "https://api.allorigins.win/get?url=";
+            const responseProxy = await fetch(proxySecundario + encodeURIComponent(url));
+            const dataProxy = await responseProxy.json();
+            const noticiasFinal = JSON.parse(dataProxy.contents);
+            return noticiasFinal.articles || [];
+        } catch (proxyError) {
+            console.error("Proxy também falhou:", proxyError);
             return [];
         }
-    } catch (error) {
-        console.error("Erro de conexão ou Proxy:", error);
-        return [];
     }
 }
