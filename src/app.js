@@ -1,5 +1,6 @@
 /**
  * ORQUESTRADOR PRINCIPAL - src/app.js
+ * Configurado para mostrar a engrenagem APENAS para o administrador.
  */
 
 import { buscarNoticias } from './api/news-service.js';
@@ -8,8 +9,12 @@ import { criarCardNoticia } from './components/card-noticia.js';
 async function inicializarSite() {
     const feed = document.getElementById('news-feed');
     
-    // Cria o botão de configuração (engrenagem) se ele não existir
-    if (!document.getElementById('config-btn')) {
+    // VERIFICAÇÃO DE SEGURANÇA:
+    // O ícone só é criado se a URL contiver '?admin=true'
+    const urlParams = new URLSearchParams(window.location.search);
+    const isAdmin = urlParams.get('admin') === 'true';
+
+    if (isAdmin && !document.getElementById('config-btn')) {
         const configBtn = document.createElement('button');
         configBtn.id = 'config-btn';
         configBtn.innerHTML = '⚙️';
@@ -29,24 +34,23 @@ async function inicializarSite() {
     } else {
         feed.innerHTML = `
             <div class="glass-panel" style="margin:20px; padding:30px; text-align:center; border-radius:20px;">
-                <p>Nenhuma notícia encontrada.</p>
-                <p style="font-size:0.8rem; color:#666;">Clique na ⚙️ abaixo para inserir sua chave do GNews.</p>
+                <p>OIO News Vision</p>
+                <p style="font-size:0.8rem; color:#666;">Aguardando conexão com a fonte de notícias.</p>
             </div>`;
     }
 }
 
 function abrirConfiguracao() {
-    const chave = prompt("Insira sua API Key do GNews (Privado e Seguro):");
+    const chave = prompt("Acesso Restrito: Insira sua API Key do GNews:");
     if (chave) {
         localStorage.setItem('GNEWS_API_KEY', chave);
-        alert("Configuração salva! O site será atualizado.");
+        alert("Chave configurada com sucesso!");
         location.reload();
     }
 }
 
 document.addEventListener('DOMContentLoaded', inicializarSite);
 
-// Garante que o menu lateral não cause erro ao clicar
 window.filterNews = (categoria) => {
-    console.log("Filtro selecionado:", categoria);
+    console.log("Filtro:", categoria);
 };
